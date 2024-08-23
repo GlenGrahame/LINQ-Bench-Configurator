@@ -106,7 +106,7 @@
 <body>
     <h1>Your Configured Bench</h1>
 
-<img id="configuredImage" src="Images/initial_image.png" alt="Configured Bench Image">
+<img id="configuredImage" src="Images/standard_bench.png" alt="Configured Bench Image">
 
     <div class="options-container">
         <div class="option" id="sliderOption" onclick="selectOption('slider')">
@@ -204,7 +204,7 @@
         imageName = selectedMainOption === 'slider' ? 'SB_XLxSLIDER.png' : 'SB_XLxSTD.png';
     } else {
         // If no options selected, set to a default or placeholder image
-        imageName = 'initial_image.png';  // Or any default image you want
+        imageName = 'standard_bench.png';  // Or any default image you want
     }
 
     // Ensure imageName is not empty before setting src
