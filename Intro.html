@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINQ V2 Bench Configurator - Intro</title>
+
+    <!-- Import Roboto font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-image: url('Images/intro.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            font-family: 'Roboto', sans-serif; /* Apply Roboto font */
+        }
+
+        #title {
+            position: absolute;
+            top: 10%; /* Position the title at the top */
+            width: 100%;
+            text-align: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #startButton {
+            position: absolute;
+            bottom: 10%; /* Position button 9/10ths down the screen */
+            left: 50%; /* Center the button horizontally */
+            transform: translateX(-50%);
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            #startButton:hover {
+                background-color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <div id="title">Welcome to the LINQ V2 Bench Configurator</div>
+    <button id="startButton" onclick="startConfigurator()">Start</button>
+
+    <script>
+        function startConfigurator() {
+            // Redirects to the next page
+            window.location.href = 'bench_selection.html';
+        }
+    </script>
+</body>
+</html>

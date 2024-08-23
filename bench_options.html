@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINQ V2 Bench Configurator - Configure Your Bench</title>
+
+    <!-- Import Roboto font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: dimgrey;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #selectedBench {
+            text-align: center;
+            color: white;
+            margin-top: 10px;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .options-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        .option {
+            margin: 20px;
+            cursor: pointer;
+            text-align: center;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+            .option img {
+                width: 400px; /* Set image width */
+                height: 315px; /* Set image height */
+                border: 2px solid #ddd;
+                border-radius: 8px;
+                transition: border-color 0.3s, transform 0.3s;
+            }
+
+            .option:hover img {
+                border-color: #007BFF; /* Change border color on hover */
+                border-width: 4px; /* Increase border width on hover */
+                transform: scale(1.05); /* Slightly enlarge on hover */
+            }
+
+            .option.selected img {
+                border-color: #007BFF; /* Change border color when selected */
+                border-width: 4px; /* Increase border width when selected */
+                transform: scale(1.05); /* Slightly enlarge when selected */
+            }
+
+            .option.disabled {
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
+
+            .option p {
+                margin-top: 10px;
+                font-size: 20px;
+            }
+
+        #nextButton {
+            display: block;
+            margin: 80px auto;
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            #nextButton:hover {
+                background-color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <h1>Configure Your Bench</h1>
+    <div id="selectedBench">Selected Bench: </div>
+
+    <div class="options-container">
+        <div class="option" onclick="selectOption(this, 'Standard Worktop', '200-10088-006')">
+            <img src="Images/standard_worktop.png" alt="Standard Worktop">
+            <p>Standard Worktop</p>
+        </div>
+
+        <div class="option" id="xlWorktopOption" onclick="selectOption(this, 'XL Worktop', '200-10088-007')">
+            <img src="Images/xl_worktop.png" alt="XL Worktop">
+            <p>XL Worktop</p>
+        </div>
+
+        <div class="option" id="shelfOption" onclick="selectOption(this, 'Shelf', '200-10088-008')">
+            <img src="Images/shelf.png" alt="Shelf">
+            <p>Shelf</p>
+        </div>
+    </div>
+
+    <button id="nextButton" onclick="nextStep()">Next</button>
+
+    <script>
+        let selectedOption = null;
+
+        function loadBenchType() {
+            const benchType = localStorage.getItem('selectedBench');
+            document.getElementById('selectedBench').innerText += benchType;
+
+            // Disable XL Worktop and Shelf options if Side-Bench with Rail or Side-Bench Basic is selected
+            if (benchType === "Side-Bench with Rail" || benchType === "Side-Bench Basic") {
+                document.getElementById('xlWorktopOption').classList.add('disabled');
+                document.getElementById('xlWorktopOption').onclick = null; // Disable click event
+                document.getElementById('shelfOption').classList.add('disabled');
+                document.getElementById('shelfOption').onclick = null; // Disable click event
+            }
+        }
+
+        function selectOption(element, option, partNumber) {
+            // Deselect previously selected option
+            if (selectedOption) {
+                selectedOption.classList.remove('selected');
+            }
+
+            // Select the new option
+            selectedOption = element;
+            selectedOption.classList.add('selected');
+
+            // Retrieve the BOM list from localStorage
+            let bomList = JSON.parse(localStorage.getItem('benchBOM')) || [];
+
+            // Check if the part number already exists in the BOM list
+            const existingItem = bomList.find(item => item.partNumber === partNumber);
+
+            // If the item exists, increment the quantity
+            if (existingItem) {
+                existingItem.quantity += 1; // Increment existing quantity
+            } else {
+                // If the item doesn't exist, add it with the correct initial quantity
+                bomList.push({
+                    partNumber: partNumber,
+                    originalQuantity: 1, // Set initial quantity to 1 (or correct initial value)
+                    quantity: 1
+                });
+            }
+
+            localStorage.setItem('benchBOM', JSON.stringify(bomList));
+        }
+
+        function nextStep() {
+            // Check if a valid option has been selected
+            if (selectedOption) {
+                // Assuming you want to move to the 'configured_bench.html' page
+                window.location.href = 'configured_bench.html';
+            } else {
+                // Alert the user to select an option before proceeding
+                alert('Please select an option before proceeding.');
+            }
+        }
+
+        window.onload = loadBenchType;
+    </script>
+</body>
+</html>

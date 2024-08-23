@@ -1,0 +1,236 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINQ V2 Bench Configurator - Additional Modules</title>
+
+    <!-- Import Roboto font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: dimgrey;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 36px;
+        }
+
+        .modules-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .module {
+            margin: 20px;
+            text-align: center;
+        }
+
+            .module img {
+                width: 200px;
+                height: auto;
+                border: 2px solid #ddd;
+                border-radius: 8px;
+                transition: border-color 0.3s, transform 0.3s;
+            }
+
+            .module:hover img {
+                border-color: #007BFF;
+                transform: scale(1.05);
+            }
+
+            .module p {
+                margin-top: 10px;
+                font-size: 18px;
+                color: #333;
+            }
+
+        .quantity-input {
+            width: 60px;
+            padding: 5px;
+            font-size: 16px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        #updateButton {
+            margin-top: 40px;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            #updateButton:hover {
+                background-color: #0056b3;
+            }
+    </style>
+    <script>
+        function selectModule(partNumber) {
+            const quantity = document.getElementById(`quantity-${partNumber}`).value;
+            if (quantity > 0) {
+                return { partNumber, quantity: parseInt(quantity) };
+            }
+            return null;
+        }
+
+        function updateBOM() {
+            const selectedModules = [];
+
+            // Add the selected modules to the groupedBOM
+            const modules = [
+                '200-10088-001', '200-10088-002', '200-10088-003',
+                '200-10088-004', '200-10088-005', '200-10088-006',
+                '200-10088-007', '200-10088-008', '200-10088-009',
+                '200-10088-010', '200-10088-011', '200-10088-012'
+            ];
+
+            modules.forEach(partNumber => {
+                const module = selectModule(partNumber);
+                if (module) {
+                    selectedModules.push(module);
+                }
+            });
+
+            if (selectedModules.length > 0) {
+                let allModulesBOMs = JSON.parse(localStorage.getItem('allModulesBOMs')) || [];
+                let adjustedModulesBOMs = JSON.parse(localStorage.getItem('adjustedModulesBOMs')) || [];
+
+                if (!Array.isArray(allModulesBOMs)) {
+                    allModulesBOMs = [];
+                }
+                if (!Array.isArray(adjustedModulesBOMs)) {
+                    adjustedModulesBOMs = [];
+                }
+
+                // Create a new group for the selected modules with a default multiplier of 1
+                const newBOMGroup = {
+                    benchType: 'Additional Modules',
+                    bom: selectedModules.map(module => ({
+                        partNumber: module.partNumber,
+                        originalQuantity: module.quantity, // Save original quantity for recalculations
+                        quantity: module.quantity
+                    })),
+                    multiplier: 1
+                };
+
+                // Append the new group to the existing BOMs in localStorage1
+                allModulesBOMs.push(newBOMGroup);
+                adjustedModulesBOMs.push(JSON.parse(JSON.stringify(newBOMGroup))); // Deep copy for adjustments
+
+                // Save the updated BOMs back to localStorage1
+                localStorage.setItem('allModulesBOMs', JSON.stringify(allModulesBOMs));
+                localStorage.setItem('adjustedModulesBOMs', JSON.stringify(adjustedModulesBOMs));
+
+                // Redirect to the BOM page after updating
+                window.location.href = 'bom.html';
+            } else {
+                alert('No modules selected. Please enter quantities.');
+            }
+        }
+
+
+
+
+
+    </script>
+</head>
+<body>
+    <h1>Select Additional Modules</h1>
+
+    <div class="modules-container">
+        <div class="module">
+            <img src="Images/Base.png" alt="Base">
+            <p>Base</p>
+            <input type="number" id="quantity-200-10088-001" class="quantity-input" min="0" value="0">
+        </div>
+
+        <div class="module">
+            <img src="Images/Base_Simple.png" alt="Base Simple">
+            <p>Base Simple</p>
+            <input type="number" id="quantity-200-10088-002" class="quantity-input" min="0" value="0">
+        </div>
+
+        <div class="module">
+            <img src="Images/Uprights_Standard.png" alt="Uprights Standard">
+            <p>Uprights Standard</p>
+            <input type="number" id="quantity-200-10088-003" class="quantity-input" min="0" value="0">
+        </div>
+
+        <div class="module">
+            <img src="Images/Uprights_Tall.png" alt="Uprights Tall">
+            <p>Uprights Tall</p>
+            <input type="number" id="quantity-200-10088-004" class="quantity-input" min="0" value="0">
+        </div>
+
+        <div class="module">
+            <img src="Images/Uprights_Side_Bench.png" alt="Uprights Side Bench">
+            <p>Uprights Side Bench</p>
+            <input type="number" id="quantity-200-10088-005" class="quantity-input" min="0" value="0">
+        </div>
+
+        <div class="module">
+            <img src="Images/standard_worktop.png" alt="Worktop Standard">
+            <p>Worktop Standard</p>
+            <input type="number" id="quantity-200-10088-006" class="quantity-input" min="0" value="0">
+        </div>
+
+        <div class="module">
+            <img src="Images/xl_worktop.png" alt="Worktop XL">
+            <p>Worktop XL</p>
+            <input type="number" id="quantity-200-10088-007" class="quantity-input" min="0" value="0">
+        </div>
+
+        <div class="module">
+            <img src="Images/Shelf.png" alt="Shelf">
+            <p>Shelf</p>
+            <input type="number" id="quantity-200-10088-008" class="quantity-input" min="0" value="0">
+        </div>
+
+        <div class="module">
+            <img src="Images/Electronics_Enclosure.png" alt="Electronics Enclosure">
+            <p>Electronics Enclosure</p>
+            <input type="number" id="quantity-200-10088-009" class="quantity-input" min="0" value="0">
+        </div>
+
+        <div class="module">
+            <img src="Images/Rail_Cladding.png" alt="Rail Cladding">
+            <p>Rail Cladding</p>
+            <input type="number" id="quantity-200-10088-010" class="quantity-input" min="0" value="0">
+        </div>
+
+        <div class="module">
+            <img src="Images/sliding_worktop.png" alt="Slider">
+            <p>Slider</p>
+            <input type="number" id="quantity-200-10088-011" class="quantity-input" min="0" value="0">
+        </div>
+
+        <div class="module">
+            <img src="Images/Light_Layer.png" alt="Light Layer">
+            <p>Light Layer</p>
+            <input type="number" id="quantity-200-10088-012" class="quantity-input" min="0" value="0">
+        </div>
+    </div>
+
+    <button id="updateButton" onclick="updateBOM()">Update BOM</button>
+</body>
+</html>

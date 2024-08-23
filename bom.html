@@ -1,0 +1,241 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>LINQ V2 Bench Configurator - BOM</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: dimgrey;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        #buttonContainer {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            width: 100%;
+            gap: 15px;
+        }
+
+        .bom-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: white;
+        }
+
+            .bom-section h2 {
+                margin-bottom: 20px;
+            }
+
+        .multiplier-container {
+            margin-bottom: 20px;
+        }
+
+        .multiplier-input {
+            padding: 10px;
+            font-size: 18px;
+            width: 80px;
+            text-align: center;
+        }
+
+        .apply-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin-left: 10px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+            .apply-button:hover {
+                background-color: #0056b3;
+            }
+
+        .top-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+            .top-button:hover {
+                background-color: #0056b3;
+            }
+
+        #bomList {
+            list-style-type: none;
+            padding: 0;
+        }
+    </style>
+    <script>
+        function loadBOM() {
+            let adjustedBOMs = JSON.parse(localStorage.getItem('adjustedBOMs')) || [];
+            let adjustedModulesBOMs = JSON.parse(localStorage.getItem('adjustedModulesBOMs')) || [];
+
+            const list = document.getElementById('bomList');
+            list.innerHTML = ''; // Clear any existing BOM list
+
+            const combinedBOMs = adjustedBOMs.concat(adjustedModulesBOMs);
+
+            if (combinedBOMs.length === 0) {
+                const li = document.createElement('li');
+                li.innerText = 'No BOM items found.';
+                list.appendChild(li);
+            } else {
+                combinedBOMs.forEach((bomGroup, index) => {
+                    const section = document.createElement('div');
+                    section.classList.add('bom-section');
+
+                    const title = document.createElement('h2');
+                    title.innerText = `Configuration ${index + 1} (${bomGroup.benchType || "Unknown Configuration"})`;
+                    section.appendChild(title);
+
+                    const multiplierContainer = document.createElement('div');
+                    multiplierContainer.classList.add('multiplier-container');
+
+                    const multiplierLabel = document.createElement('label');
+                    multiplierLabel.innerText = 'Quantity Multiplier: ';
+                    multiplierContainer.appendChild(multiplierLabel);
+
+                    const multiplierInput = document.createElement('input');
+                    multiplierInput.type = 'number';
+                    multiplierInput.value = bomGroup.multiplier || 1;
+                    multiplierInput.min = 1;
+                    multiplierInput.classList.add('multiplier-input');
+                    multiplierInput.id = `multiplier-${index}`;
+                    multiplierContainer.appendChild(multiplierInput);
+
+                    const applyButton = document.createElement('button');
+                    applyButton.classList.add('apply-button');
+                    applyButton.innerText = 'Apply';
+                    applyButton.onclick = () => applyMultiplier(index, bomGroup.benchType);
+                    multiplierContainer.appendChild(applyButton);
+
+                    section.appendChild(multiplierContainer);
+
+                    const bomList = document.createElement('ul');
+                    bomGroup.bom.forEach(item => {
+                        const li = document.createElement('li');
+                        li.id = `part-${index}-${item.partNumber}`;
+                        li.innerText = `Part Number: ${item.partNumber} (Qty: ${item.quantity})`;
+                        bomList.appendChild(li);
+                    });
+
+                    section.appendChild(bomList);
+                    list.appendChild(section);
+                });
+            }
+        }
+
+        function configureMore() {
+            console.log("Configure More button clicked");
+            window.location.href = 'bench_selection.html'; // Redirect to the bench selection page
+        }
+
+        function addAdditionalModules() {
+            console.log("Add Additional Modules button clicked");
+            window.location.href = 'additional_modules.html'; // Redirect to the additional modules page
+        }
+
+        function finishConfiguration() {
+            console.log("Finish button clicked");
+            window.location.href = 'final_bom.html'; // Redirect to the final BOM page
+        }
+
+        function applyMultiplier(index, benchType) {
+            console.log("Apply button clicked for index:", index, "Bench Type:", benchType);
+            const multiplier = parseInt(document.getElementById(`multiplier-${index}`).value) || 1;
+            let adjustedBOMs = JSON.parse(localStorage.getItem('adjustedBOMs')) || [];
+            let adjustedModulesBOMs = JSON.parse(localStorage.getItem('adjustedModulesBOMs')) || [];
+
+            let adjustedList = (benchType === 'Additional Modules') ? adjustedModulesBOMs : adjustedBOMs;
+
+            // Update the multiplier for the specific BOM group
+            adjustedList[index].multiplier = multiplier;
+
+            // Recalculate the BOM quantities based on the currentQuantity and the new multiplier
+            adjustedList[index].bom.forEach(item => {
+                if (!item.currentQuantity) {
+                    item.currentQuantity = item.quantity; // Set currentQuantity to the existing quantity if not already set
+                }
+                item.quantity = item.currentQuantity * multiplier; // Apply multiplier to the currentQuantity
+            });
+
+            // Save the updated BOM list back to localStorage or localStorage1
+            if (benchType === 'Additional Modules') {
+                localStorage.setItem('adjustedModulesBOMs', JSON.stringify(adjustedModulesBOMs));
+            } else {
+                localStorage.setItem('adjustedBOMs', JSON.stringify(adjustedBOMs));
+            }
+
+            // Update the BOM list display
+            displayBOM(adjustedList, index);
+        }
+
+        function displayBOM(adjustedList, index) {
+            const bomCounts = {};
+            adjustedList[index].bom.forEach(item => {
+                const partNumber = item.partNumber;
+                const quantity = item.quantity;
+                bomCounts[partNumber] = (bomCounts[partNumber] || 0) + quantity;
+            });
+
+            Object.keys(bomCounts).forEach(partNumber => {
+                const li = document.getElementById(`part-${index}-${partNumber}`);
+                if (li) {
+                    li.innerText = `Part Number: ${partNumber} (Qty: ${bomCounts[partNumber]})`;
+                }
+            });
+        }
+
+        function clearBasket() {
+            console.log("Clear Basket button clicked");
+            // Clear all BOMs and refresh the BOM list
+            localStorage.removeItem('allBOMs');
+            localStorage.removeItem('benchBOM');
+            localStorage.removeItem('adjustedBOMs'); // Clear the adjusted BOMs as well
+            localStorage.removeItem('allModulesBOMs');
+            localStorage.removeItem('adjustedModulesBOMs'); // Clear the adjusted Modules BOMs as well
+            loadBOM(); // Reload the BOM list with empty data
+        }
+
+        window.onload = () => {
+            loadBOM(); // Load BOM initially when the page loads
+        };
+    </script>
+</head>
+<body>
+    <h1>Bill of Materials (BOM) for Your Configurations</h1>
+
+    <div id="buttonContainer">
+        <button class="top-button" id="configureMoreButton" onclick="configureMore()">Configure More Benches</button>
+        <button class="top-button" id="addModulesButton" onclick="addAdditionalModules()">Add Additional Modules</button>
+        <button class="top-button" id="finishButton" onclick="finishConfiguration()">Finish</button>
+        <button class="top-button" id="clearBasketButton" onclick="clearBasket()">Clear Basket</button>
+    </div>
+
+    <ul id="bomList">
+        <!-- Dynamically populated BOM list -->
+    </ul>
+</body>
+</html>

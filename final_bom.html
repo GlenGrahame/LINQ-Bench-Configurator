@@ -1,0 +1,523 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Final Consolidated BOM</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: dimgrey;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            background-color: white;
+            border-radius: 5px;
+            width: 80%;
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+
+            ul li {
+                font-size: 18px;
+                margin: 10px 0;
+            }
+
+        #exportButton {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+            #exportButton:hover {
+                background-color: #0056b3;
+            }
+
+        .sub-bom {
+            margin-left: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+    <script>
+        let consolidatedBOM = {};
+
+        function loadFinalBOM() {
+            // Load adjusted BOMs from localStorage
+            let adjustedBOMs = JSON.parse(localStorage.getItem('adjustedBOMs')) || [];
+            let adjustedModulesBOMs = JSON.parse(localStorage.getItem('adjustedModulesBOMs')) || [];
+
+            // Combine both BOM arrays
+            const allBOMs = adjustedBOMs.concat(adjustedModulesBOMs);
+
+            consolidatedBOM = {}; // Clear previous consolidatedBOM data
+
+            // Calculate the consolidated BOM, including additional modules
+            allBOMs.forEach(bomGroup => {
+                bomGroup.bom.forEach(item => {
+                    const partNumber = item.partNumber;
+                    const quantity = item.quantity; // Already adjusted by multiplier
+
+                    consolidatedBOM[partNumber] = (consolidatedBOM[partNumber] || 0) + quantity;
+                });
+            });
+
+            const list = document.getElementById('finalBOMList');
+            list.innerHTML = '';
+
+            if (Object.keys(consolidatedBOM).length === 0) {
+                const li = document.createElement('li');
+                li.innerText = 'No BOM items found.';
+                list.appendChild(li);
+            } else {
+                // Display consolidated BOM and sub-BOMs
+                Object.keys(consolidatedBOM).forEach(partNumber => {
+                    const li = document.createElement('li');
+                    li.innerText = `Part Number: ${partNumber} (Qty: ${consolidatedBOM[partNumber]})`;
+                    list.appendChild(li);
+
+                    // Sub-BOM logic remains unchanged, using the consolidatedBOM quantities
+                    if (partNumber === '200-10088-001') {
+                        const subBOM_001 = [
+                            { part: '1010-10088-038', qty: 4 },
+                            { part: '1010-10088-040', qty: 4 },
+                            { part: '1010-10088-056', qty: 2 },
+                            { part: '1010-10088-058', qty: 2 },
+                            { part: '1010-10088-060', qty: 4 },
+                            { part: '1010-10088-061', qty: 2 },
+                            { part: '1010-10088-080', qty: 2 },
+                            { part: '1010-10088-105', qty: 2 }
+                        ];
+
+                        subBOM_001.forEach(subItem => {
+                            const subLi = document.createElement('li');
+                            subLi.classList.add('sub-bom');
+                            subLi.innerText = `Part Number: ${subItem.part} (Qty: ${subItem.qty * consolidatedBOM[partNumber]})`;
+                            list.appendChild(subLi);
+                        });
+                    }
+
+                    // Sub-BOM for 200-10088-002
+                    if (partNumber === '200-10088-002') {
+                        const subBOM_002 = [
+                            { part: '1010-10088-038', qty: 4 },
+                            { part: '1010-10088-040', qty: 4 },
+                            { part: '1010-10088-056', qty: 2 },
+                            { part: '1010-10088-058', qty: 2 },
+                            { part: '1010-10088-061', qty: 2 },
+                            { part: '1010-10088-080', qty: 2 },
+                            { part: '1010-10088-105', qty: 2 }
+                        ];
+
+                        subBOM_002.forEach(subItem => {
+                            const subLi = document.createElement('li');
+                            subLi.classList.add('sub-bom');
+                            subLi.innerText = `Part Number: ${subItem.part} (Qty: ${subItem.qty * consolidatedBOM[partNumber]})`;
+                            list.appendChild(subLi);
+                        });
+                    }
+
+                    // Sub-BOM for 200-10088-003
+                    if (partNumber === '200-10088-003') {
+                        const subBOM_003 = [
+                            { part: '1010-10088-045', qty: 2 },
+                            { part: '1010-10088-073', qty: 2 },
+                            { part: '1010-10088-074', qty: 4 },
+                            { part: '1010-10088-079', qty: 2 },
+                            { part: '1010-10088-081', qty: 6 },
+                            { part: '1010-10088-091', qty: 2 },
+                            { part: '1010-10088-092', qty: 4 },
+                            { part: '1010-10088-093', qty: 4 }
+                        ];
+
+                        subBOM_003.forEach(subItem => {
+                            const subLi = document.createElement('li');
+                            subLi.classList.add('sub-bom');
+                            subLi.innerText = `Part Number: ${subItem.part} (Qty: ${subItem.qty * consolidatedBOM[partNumber]})`;
+                            list.appendChild(subLi);
+                        });
+                    }
+
+                    // Sub-BOM for 200-10088-004
+                    if (partNumber === '200-10088-004') {
+                        const subBOM_004 = [
+                            { part: '1010-10088-045', qty: 2 },
+                            { part: '1010-10088-079', qty: 2 },
+                            { part: '1010-10088-081', qty: 6 },
+                            { part: '1010-10088-083', qty: 2 },
+                            { part: '1010-10088-084', qty: 4 },
+                            { part: '1010-10088-095', qty: 2 },
+                            { part: '1010-10088-092', qty: 8 },
+                            { part: '1010-10088-106', qty: 4 }
+                        ];
+
+                        subBOM_004.forEach(subItem => {
+                            const subLi = document.createElement('li');
+                            subLi.classList.add('sub-bom');
+                            subLi.innerText = `Part Number: ${subItem.part} (Qty: ${subItem.qty * consolidatedBOM[partNumber]})`;
+                            list.appendChild(subLi);
+                        });
+                    }
+
+                    // Sub-BOM for 200-10088-005
+                    if (partNumber === '200-10088-005') {
+                        const subBOM_005 = [
+                            { part: '1010-10088-045', qty: 2 },
+                            { part: '1010-10088-081', qty: 6 },
+                            { part: '1010-10088-092', qty: 4 },
+                            { part: '1010-10088-097', qty: 2 },
+                            { part: '1010-10088-098', qty: 2 },
+                            { part: '1010-10088-099', qty: 4 }
+                        ];
+
+                        subBOM_005.forEach(subItem => {
+                            const subLi = document.createElement('li');
+                            subLi.classList.add('sub-bom');
+                            subLi.innerText = `Part Number: ${subItem.part} (Qty: ${subItem.qty * consolidatedBOM[partNumber]})`;
+                            list.appendChild(subLi);
+                        });
+                    }
+                    // Sub-BOM for 200-10088-006
+                    if (partNumber === '200-10088-006') {
+                        const subBOM_006 = [
+                            { part: '1010-10088-038', qty: 4 },
+                            { part: '1010-10088-040', qty: 4 },
+                            { part: '1010-10088-043', qty: 1 },
+                            { part: '1010-10088-056', qty: 2 },
+                            { part: '1010-10088-058', qty: 2 },
+                            { part: '1010-10088-059', qty: 3 },
+                            { part: '1010-10088-060', qty: 4 },
+                            { part: '1010-10088-061', qty: 2 }
+                        ];
+
+                        subBOM_006.forEach(subItem => {
+                            const subLi = document.createElement('li');
+                            subLi.classList.add('sub-bom');
+                            subLi.innerText = `Part Number: ${subItem.part} (Qty: ${subItem.qty * consolidatedBOM[partNumber]})`;
+                            list.appendChild(subLi);
+                        });
+                    }
+
+                    // Sub-BOM for 200-10088-007
+                    if (partNumber === '200-10088-007') {
+                        const subBOM_007 = [
+                            { part: '1010-10088-038', qty: 4 },
+                            { part: '1010-10088-040', qty: 4 },
+                            { part: '1010-10088-056', qty: 2 },
+                            { part: '1010-10088-058', qty: 2 },
+                            { part: '1010-10088-060', qty: 2 },
+                            { part: '1010-10088-069', qty: 2 },
+                            { part: '1010-10088-070', qty: 3 },
+                            { part: '1010-10088-071', qty: 2 },
+                            { part: '1010-10088-072', qty: 1 }
+                        ];
+
+                        subBOM_007.forEach(subItem => {
+                            const subLi = document.createElement('li');
+                            subLi.classList.add('sub-bom');
+                            subLi.innerText = `Part Number: ${subItem.part} (Qty: ${subItem.qty * consolidatedBOM[partNumber]})`;
+                            list.appendChild(subLi);
+                        });
+                    }
+                    // Sub-BOM for 200-10088-008
+                    if (partNumber === '200-10088-008') {
+                        const subBOM_008 = [
+                            { part: '1010-10088-038', qty: 2 },
+                            { part: '1010-10088-040', qty: 2 },
+                            { part: '1010-10088-056', qty: 2 },
+                            { part: '1010-10088-058', qty: 2 },
+                            { part: '1010-10088-059', qty: 3 },
+                            { part: '1010-10088-060', qty: 4 },
+                            { part: '1010-10088-081', qty: 2 },
+                            { part: '1010-10088-096', qty: 2 },
+                            { part: '1010-10088-101', qty: 1 },
+                            { part: '100-10088-100', qty: 2 }
+                        ];
+
+                        subBOM_008.forEach(subItem => {
+                            const subLi = document.createElement('li');
+                            subLi.classList.add('sub-bom');
+                            subLi.innerText = `Part Number: ${subItem.part} (Qty: ${subItem.qty * consolidatedBOM[partNumber]})`;
+                            list.appendChild(subLi);
+                        });
+                    }
+
+                    // Sub-BOM for 200-10088-009
+                    if (partNumber === '200-10088-009') {
+                        const subBOM_009 = [
+                            { part: '1010-10088-094', qty: 1 },
+                            { part: '1010-10088-102', qty: 2 }
+                        ];
+
+                        subBOM_009.forEach(subItem => {
+                            const subLi = document.createElement('li');
+                            subLi.classList.add('sub-bom');
+                            subLi.innerText = `Part Number: ${subItem.part} (Qty: ${subItem.qty * consolidatedBOM[partNumber]})`;
+                            list.appendChild(subLi);
+                        });
+                    }
+
+                    // Sub-BOM for 200-10088-010
+                    if (partNumber === '200-10088-010') {
+                        const subBOM_010 = [
+                            { part: '1010-10088-087', qty: 8 },
+                            { part: '1010-10088-088', qty: 2 },
+                            { part: '1010-10088-089', qty: 2 },
+                            { part: '1010-10088-090', qty: 2 }
+                        ];
+
+                        subBOM_010.forEach(subItem => {
+                            const subLi = document.createElement('li');
+                            subLi.classList.add('sub-bom');
+                            subLi.innerText = `Part Number: ${subItem.part} (Qty: ${subItem.qty * consolidatedBOM[partNumber]})`;
+                            list.appendChild(subLi);
+                        });
+                    }
+
+                    // Sub-BOM for 200-10088-011
+                    if (partNumber === '200-10088-011') {
+                        const subBOM_011 = [
+                            { part: '1010-10088-040', qty: 4 },
+                            { part: '1010-10088-056', qty: 2 },
+                            { part: '1010-10088-060', qty: 4 },
+                            { part: '1010-10088-061', qty: 2 },
+                            { part: '1010-10088-104', qty: 1 },
+                            { part: '100-10088-107', qty: 2 }
+                        ];
+
+                        subBOM_011.forEach(subItem => {
+                            const subLi = document.createElement('li');
+                            subLi.classList.add('sub-bom');
+                            subLi.innerText = `Part Number: ${subItem.part} (Qty: ${subItem.qty * consolidatedBOM[partNumber]})`;
+                            list.appendChild(subLi);
+                        });
+                    }
+
+
+
+                });
+            }
+        }
+
+        function exportToCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Part Number,Quantity\n";
+
+            Object.keys(consolidatedBOM).forEach(partNumber => {
+                csvContent += `${partNumber},${consolidatedBOM[partNumber]}\n`;
+
+                // Include sub-BOM logic in CSV export
+                if (partNumber === '200-10088-001') {
+                    const subBOM_001 = [
+                        { part: '1010-10088-038', qty: 4 },
+                        { part: '1010-10088-040', qty: 4 },
+                        { part: '1010-10088-056', qty: 2 },
+                        { part: '1010-10088-058', qty: 2 },
+                        { part: '1010-10088-060', qty: 4 },
+                        { part: '1010-10088-061', qty: 2 },
+                        { part: '1010-10088-080', qty: 2 },
+                        { part: '1010-10088-105', qty: 2 }
+                    ];
+                    subBOM_001.forEach(subItem => {
+                        csvContent += `${subItem.part},${subItem.qty * consolidatedBOM[partNumber]}\n`;
+                    });
+                }
+
+                if (partNumber === '200-10088-002') {
+                    const subBOM_002 = [
+                        { part: '1010-10088-038', qty: 4 },
+                        { part: '1010-10088-040', qty: 4 },
+                        { part: '1010-10088-056', qty: 2 },
+                        { part: '1010-10088-058', qty: 2 },
+                        { part: '1010-10088-061', qty: 2 },
+                        { part: '1010-10088-080', qty: 2 },
+                        { part: '1010-10088-105', qty: 2 }
+                    ];
+
+                    subBOM_002.forEach(subItem => {
+                        csvContent += `${subItem.part},${subItem.qty * consolidatedBOM[partNumber]}\n`;
+                    });
+                }
+                if (partNumber === '200-10088-003') {
+                    const subBOM_003 = [
+                        { part: '1010-10088-045', qty: 2 },
+                        { part: '1010-10088-073', qty: 2 },
+                        { part: '1010-10088-074', qty: 4 },
+                        { part: '1010-10088-079', qty: 2 },
+                        { part: '1010-10088-081', qty: 6 },
+                        { part: '1010-10088-091', qty: 2 },
+                        { part: '1010-10088-092', qty: 4 },
+                        { part: '1010-10088-093', qty: 4 }
+                    ];
+
+                    subBOM_003.forEach(subItem => {
+                        csvContent += `${subItem.part},${subItem.qty * consolidatedBOM[partNumber]}\n`;
+                    });
+                }
+                if (partNumber === '200-10088-004') {
+                    const subBOM_004 = [
+                        { part: '1010-10088-045', qty: 2 },
+                        { part: '1010-10088-079', qty: 2 },
+                        { part: '1010-10088-081', qty: 6 },
+                        { part: '1010-10088-083', qty: 2 },
+                        { part: '1010-10088-084', qty: 4 },
+                        { part: '1010-10088-095', qty: 2 },
+                        { part: '1010-10088-092', qty: 8 },
+                        { part: '1010-10088-106', qty: 4 }
+                    ];
+
+                    subBOM_004.forEach(subItem => {
+                        csvContent += `${subItem.part},${subItem.qty * consolidatedBOM[partNumber]}\n`;
+                    });
+                }
+                if (partNumber === '200-10088-005') {
+                    const subBOM_005 = [
+                        { part: '1010-10088-045', qty: 2 },
+                        { part: '1010-10088-081', qty: 6 },
+                        { part: '1010-10088-092', qty: 4 },
+                        { part: '1010-10088-097', qty: 2 },
+                        { part: '1010-10088-098', qty: 2 },
+                        { part: '1010-10088-099', qty: 4 }
+                    ];
+
+                    subBOM_005.forEach(subItem => {
+                        csvContent += `${subItem.part},${subItem.qty * consolidatedBOM[partNumber]}\n`;
+                    });
+                }
+                if (partNumber === '200-10088-006') {
+                    const subBOM_006 = [
+                        { part: '1010-10088-038', qty: 4 },
+                        { part: '1010-10088-040', qty: 4 },
+                        { part: '1010-10088-043', qty: 1 },
+                        { part: '1010-10088-056', qty: 2 },
+                        { part: '1010-10088-058', qty: 2 },
+                        { part: '1010-10088-059', qty: 3 },
+                        { part: '1010-10088-060', qty: 4 },
+                        { part: '1010-10088-061', qty: 2 }
+                    ];
+
+                    subBOM_006.forEach(subItem => {
+                        csvContent += `${subItem.part},${subItem.qty * consolidatedBOM[partNumber]}\n`;
+                    });
+                }
+                if (partNumber === '200-10088-007') {
+                    const subBOM_007 = [
+                        { part: '1010-10088-038', qty: 4 },
+                        { part: '1010-10088-040', qty: 4 },
+                        { part: '1010-10088-056', qty: 2 },
+                        { part: '1010-10088-058', qty: 2 },
+                        { part: '1010-10088-060', qty: 2 },
+                        { part: '1010-10088-069', qty: 2 },
+                        { part: '1010-10088-070', qty: 3 },
+                        { part: '1010-10088-071', qty: 2 },
+                        { part: '1010-10088-072', qty: 1 }
+                    ];
+
+                    subBOM_007.forEach(subItem => {
+                        csvContent += `${subItem.part},${subItem.qty * consolidatedBOM[partNumber]}\n`;
+                    });
+                }
+                if (partNumber === '200-10088-008') {
+                    const subBOM_008 = [
+                        { part: '1010-10088-038', qty: 2 },
+                        { part: '1010-10088-040', qty: 2 },
+                        { part: '1010-10088-056', qty: 2 },
+                        { part: '1010-10088-058', qty: 2 },
+                        { part: '1010-10088-059', qty: 3 },
+                        { part: '1010-10088-060', qty: 4 },
+                        { part: '1010-10088-081', qty: 2 },
+                        { part: '1010-10088-096', qty: 2 },
+                        { part: '1010-10088-101', qty: 1 },
+                        { part: '100-10088-100', qty: 2 }
+                    ];
+
+                    subBOM_008.forEach(subItem => {
+                        csvContent += `${subItem.part},${subItem.qty * consolidatedBOM[partNumber]}\n`;
+                    });
+                }
+                if (partNumber === '200-10088-009') {
+                    const subBOM_009 = [
+                        { part: '1010-10088-094', qty: 1 },
+                        { part: '1010-10088-102', qty: 2 }
+                    ];
+
+                    subBOM_009.forEach(subItem => {
+                        csvContent += `${subItem.part},${subItem.qty * consolidatedBOM[partNumber]}\n`;
+                    });
+                }
+                if (partNumber === '200-10088-010') {
+                    const subBOM_010 = [
+                        { part: '1010-10088-087', qty: 8 },
+                        { part: '1010-10088-088', qty: 2 },
+                        { part: '1010-10088-089', qty: 2 },
+                        { part: '1010-10088-090', qty: 2 }
+                    ];
+
+                    subBOM_010.forEach(subItem => {
+                        csvContent += `${subItem.part},${subItem.qty * consolidatedBOM[partNumber]}\n`;
+                    });
+                }
+                if (partNumber === '200-10088-011') {
+                    const subBOM_011 = [
+                        { part: '1010-10088-040', qty: 4 },
+                        { part: '1010-10088-056', qty: 2 },
+                        { part: '1010-10088-060', qty: 4 },
+                        { part: '1010-10088-061', qty: 2 },
+                        { part: '1010-10088-104', qty: 1 },
+                        { part: '100-10088-107', qty: 2 }
+                    ];
+
+                    subBOM_011.forEach(subItem => {
+                        csvContent += `${subItem.part},${subItem.qty * consolidatedBOM[partNumber]}\n`;
+                    });
+                }
+
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "consolidated_bom.csv");
+            document.body.appendChild(link); // Required for FF
+
+            link.click();
+            document.body.removeChild(link); // Clean up
+        }
+
+
+            window.onload = () => {
+                loadFinalBOM(); // Load final consolidated BOM
+            };
+    </script>
+</head>
+<body>
+    <h1>Final Consolidated BOM</h1>
+
+    <ul id="finalBOMList">
+        <!-- Dynamically populated final BOM list -->
+    </ul>
+
+    <button id="exportButton" onclick="exportToCSV()">Export to CSV</button>
+</body>
+</html>
+
+

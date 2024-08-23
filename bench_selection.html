@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINQ V2 Bench Configurator - Select Your Bench</title>
+
+    <!-- Import Roboto font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: dimgrey;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .bench-type-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        .bench-type {
+            margin: 20px;
+            cursor: pointer;
+            text-align: center;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+            .bench-type img {
+                width: 400px;
+                height: 250px;
+                border: 2px solid #ddd;
+                border-radius: 8px;
+            }
+
+            .bench-type:hover img {
+                border-color: #007BFF;
+                border-width: 4px; /* Increase border width */
+                transform: scale(1.05); /* Slightly enlarge the selected option */
+            }
+
+            .bench-type p {
+                margin-top: 10px;
+                font-size: 20px;
+            }
+
+        .bom-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        .bom-button {
+            padding: 15px 30px;
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+            .bom-button:hover {
+                background-color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <h1>Select Your Bench Type</h1>
+
+    <div class="bench-type-container">
+        <div class="bench-type" onclick="selectBench('Standard Bench')">
+            <img src="Images/standard_bench.png" alt="Standard Bench">
+            <p>Standard Bench</p>
+        </div>
+
+        <div class="bench-type" onclick="selectBench('Tall Bench')">
+            <img src="Images/tall_bench.png" alt="Tall Bench">
+            <p>Tall Bench</p>
+        </div>
+
+        <div class="bench-type" onclick="selectBench('Side-Bench with Rail')">
+            <img src="Images/side_bench_with_rail.png" alt="Side-Bench with Rail">
+            <p>Side-Bench with Rail</p>
+        </div>
+
+        <div class="bench-type" onclick="selectBench('Side-Bench Basic')">
+            <img src="Images/side_bench_basic.png" alt="Side-Bench Basic">
+            <p>Side-Bench Basic</p>
+        </div>
+    </div>
+
+    <div class="bom-button-container">
+        <button class="bom-button" onclick="goToBOMPage()">Go to BOM Page</button>
+    </div>
+
+    <script>
+        // Object to store BOM numbers for each bench type, with initial quantities set to 1
+        const BOMs = {
+            "Standard Bench": [
+                { partNumber: "200-10088-009", originalQuantity: 1, quantity: 1 },
+                { partNumber: "200-10088-001", originalQuantity: 1, quantity: 1 },
+                { partNumber: "200-10088-003", originalQuantity: 1, quantity: 1 },
+                { partNumber: "200-10088-006", originalQuantity: 1, quantity: 1 }
+            ],
+            "Tall Bench": [
+                { partNumber: "200-10088-009", originalQuantity: 1, quantity: 1 },
+                { partNumber: "200-10088-001", originalQuantity: 1, quantity: 1 },
+                { partNumber: "200-10088-004", originalQuantity: 1, quantity: 1 },
+                { partNumber: "200-10088-006", originalQuantity: 1, quantity: 1 }
+            ],
+            "Side-Bench with Rail": [
+                { partNumber: "200-10088-009", originalQuantity: 1, quantity: 1 },
+                { partNumber: "200-10088-001", originalQuantity: 1, quantity: 1 },
+                { partNumber: "200-10088-005", originalQuantity: 1, quantity: 1 },
+                { partNumber: "200-10088-010", originalQuantity: 1, quantity: 1 }
+             
+            ],
+            "Side-Bench Basic": [
+                { partNumber: "200-10088-002", originalQuantity: 1, quantity: 1 }
+             
+            ]
+        };
+
+        function selectBench(benchType) {
+            const bomList = BOMs[benchType] || [];
+            localStorage.setItem('benchBOM', JSON.stringify(bomList));
+            localStorage.setItem('selectedBench', benchType);
+            window.location.href = 'bench_options.html';
+        }
+
+        function goToBOMPage() {
+            // Redirect to the BOM page
+            window.location.href = 'bom.html'; // Replace with the actual BOM page URL
+        }
+    </script>
+</body>
+</html>
