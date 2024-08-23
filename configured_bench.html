@@ -106,7 +106,7 @@
 <body>
     <h1>Your Configured Bench</h1>
 
-    <img id="configuredImage" src="Images/standard_bench.png" alt="Configured Bench Image">
+<img id="configuredImage" src="Images/initial_image.png" alt="Configured Bench Image">
 
     <div class="options-container">
         <div class="option" id="sliderOption" onclick="selectOption('slider')">
@@ -190,46 +190,32 @@
             updateImage();
         }
 
-        function updateImage() {
-            let imageName = '';
+      function updateImage() {
+    let imageName = '';
 
-            if (selectedMainOption === 'shelf') {
-                imageName = 'SB_STDxSHELF.png';
-            } else if (selectedMainOption === 'worktop') {
-                imageName = 'SB_STDxSTD.png'; // Update image when "Standard Worktop" is selected
-            } else if (selectedOption && selectedOption.option === 'Standard Worktop') {
-                imageName = selectedMainOption === 'slider' ? 'SB_STDxSLIDER.png' : 'standard_bench.png';
-            } else if (selectedOption && selectedOption.option === 'XL Worktop') {
-                imageName = selectedMainOption === 'slider' ? 'SB_XLxSLIDER.png' : 'SB_XLxSTD.png';
-            }
+    // Assign imageName based on selected options
+    if (selectedMainOption === 'shelf') {
+        imageName = 'SB_STDxSHELF.png';
+    } else if (selectedMainOption === 'worktop') {
+        imageName = 'SB_STDxSTD.png';
+    } else if (selectedOption && selectedOption.option === 'Standard Worktop') {
+        imageName = selectedMainOption === 'slider' ? 'SB_STDxSLIDER.png' : 'standard_bench.png';
+    } else if (selectedOption && selectedOption.option === 'XL Worktop') {
+        imageName = selectedMainOption === 'slider' ? 'SB_XLxSLIDER.png' : 'SB_XLxSTD.png';
+    } else {
+        // If no options selected, set to a default or placeholder image
+        imageName = 'initial_image.png';  // Or any default image you want
+    }
 
-            document.getElementById('configuredImage').src = 'Images/' + imageName;
-            console.log('Image name:', imageName);
-        }
+    // Ensure imageName is not empty before setting src
+    if (imageName) {
+        document.getElementById('configuredImage').src = 'Images/' + imageName;
+    } else {
+        console.error('No valid image name determined.');
+    }
 
-        function addBOM(option) {
-            let bomList = JSON.parse(localStorage.getItem('benchBOM')) || [];
-
-            // Get the part number for the option
-            const partNumber = getPartNumber(option);
-
-            // Check if the part number already exists in the BOM
-            const existingItem = bomList.find(item => item.partNumber === partNumber);
-
-            if (existingItem) {
-                // If the item exists, increment the quantity
-                existingItem.quantity += 1;
-            } else {
-                // If the item doesn't exist, add it with the correct initial quantity
-                bomList.push({
-                    partNumber: partNumber,
-                    originalQuantity: partNumber === '200-10088-006' ? 2 : 1, // Set initial quantity based on part number
-                    quantity: partNumber === '200-10088-006' ? 2 : 1
-                });
-            }
-
-            localStorage.setItem('benchBOM', JSON.stringify(bomList));
-        }
+    console.log('Image name set to:', imageName);  // For debugging
+}
 
         function getPartNumber(option) {
             switch (option) {
